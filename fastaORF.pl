@@ -23,16 +23,16 @@ use 5.10.0;
 use warnings;
 use strict;
 
-use lib 'lib';  # use the parent directory
+use lib 'lib';
 use FastaORFUtils;
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-&checkUsage();              # comment this line if assigning file name above
+&checkUsage();
 
 
 #++++++++++++ Main Routine +++++++++++++++++++++++++++
 
-my $seqFile = $ARGV[0];   # comment this line if assigning file name above
+my $seqFile = $ARGV[0];
 
 open (IN, $seqFile)  or die "Unable to open: ".$seqFile ;
 
