@@ -23,6 +23,7 @@ use 5.10.0;
 use warnings;
 use strict;
 
+use lib 'lib';  # use the parent directory
 use FastaORFUtils;
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
