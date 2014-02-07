@@ -11,6 +11,8 @@ use strict;
 
 use Test::More qw( no_plan );
 
+use lib '../lib';
+
 use FastaORFUtils qw(translateDNAToProtein);
 
 
