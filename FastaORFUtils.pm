@@ -1,3 +1,10 @@
+#
+#   Mark Kelley
+#   Assignment 2
+#   MCBS913 - Spring 2014
+#   02/06/10
+#
+
 package FastaORFUtils;
 
 use strict;

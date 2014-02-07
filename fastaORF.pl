@@ -2,9 +2,10 @@
 #
 # fastaORF fastafile
 #
-#    
-#   rdb
-#   01/28/10
+#   Mark Kelley
+#   Assignment 2
+#   MCBS913 - Spring 2014
+#   02/06/10
 #
 my $usageMsg = q(   Usage: fastaORF fastafile
 
