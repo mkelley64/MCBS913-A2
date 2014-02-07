@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="1ac408e7-6981-7947-a1d7-e054ffd76c58" kpf_version="5" name="MCBS913-Lab2.komodoproject">
+<file id="44ea1ef3-e186-374a-ab06-47a05a6b5639" idref="1ac408e7-6981-7947-a1d7-e054ffd76c58" name="FastaORFUtils.pm" url="FastaORFUtils.pm">
+</file>
+<file id="5ec563cc-1d05-654c-ba4a-99a4234a9fae" idref="1ac408e7-6981-7947-a1d7-e054ffd76c58" name="fastaORF.pl" url="fastaORF.pl">
+</file>
+<file id="80084127-d9a5-8b41-8de5-f6e5cdbff2b4" idref="1ac408e7-6981-7947-a1d7-e054ffd76c58" name="fastaORF.t" url="fastaORF.t">
+</file>
+</project>
