@@ -22,6 +22,8 @@ is(translateDNAToProtein('TCA'), 'S', 'Works for single replacement');
 
 is(translateDNAToProtein('TCATTCGAT'), 'SFD', 'Works for multiple replacement');
 
+is(translateDNAToProtein('TAATAGTGA'), '___', 'Handles STOP codons');
+
 is(translateDNAToProtein('CTN'), '*', 'Handles single unknown nucleotide');
 
 is(translateDNAToProtein('CTNNNCNNN'), '***', 'Handles multiple unknown nucleotides');
