@@ -48,6 +48,10 @@ if (substr( $header, 0, 1 ) ne '>') {
 
 # for each sequence
 while ($header) {
+    
+    # get sequenceId
+    my $seqId = FastaORFUtils::getSequenceId($header);
+      
     my $seq = ""; 
     my $inLine = <IN>;
 
@@ -58,12 +62,41 @@ while ($header) {
         $inLine = <IN>;
     }
     
+    my %readingFrames;
+    
+    # generate forward reading frames
+    for (my $index=0; $index<3; $index++) {
+        $readingFrames{$index} = FastaORFUtils::translateReadingFrame($seq, $index);
+    }
+    
+    # get reverse complement
+    my $revCom = FastaORFUtils::reverseComplement($seq);
+    
+    # generate reverse reading frames
+    for (my $index=0; $index<3; $index++) {
+        $readingFrames{"r$index"} = FastaORFUtils::translateReadingFrame($revCom, $index);
+    }
+    
+    
+    #temp print results
+    for (my $index=0; $index<3; $index++) {
+        my $key = $index;
+        my $val = $readingFrames{$key};
+        say "$seqId  $key   $val";
+    }
+    
+    for (my $rindex=0; $rindex<3; $rindex++) {
+        my $key = "r$rindex";
+        my $val = $readingFrames{$key};
+        say "$seqId  $key  $val";
+    }
+    
     # call translation subroutine
-    my $proteinSequence = FastaORFUtils::translateDNAToProtein($seq);
+    # my $proteinSequence = FastaORFUtils::translateDNAToProtein($seq);
 
     # output results
-    print $header;
-    say $proteinSequence;
+    #print $header;
+    # say $proteinSequence;
 
     #--------------------------------------------------------
     $header = $inLine;    # last line read is either next header or null

@@ -13,7 +13,10 @@ use Test::More qw( no_plan );
 
 use lib '../lib';
 
-use FastaORFUtils qw(translateDNAToProtein reverseComplement translateReadingFrame);
+use FastaORFUtils qw( translateDNAToProtein
+                      reverseComplement
+                      translateReadingFrame
+                      getSequenceId );
 
 
 # Test translateDNAToProtein
@@ -39,3 +42,12 @@ is(reverseComplement('CCGGAAAAAANNTTTATATAn'), 'nTATATAAANNTTTTTTCCGG', 'Handles
 is(translateReadingFrame('CCGGAAAAAAAATTTATATAT', 0), 'CCGGAAAAAAAATTTATATAT', 'Works for reading frame 0');
 is(translateReadingFrame('CCGGAAAAAAAATTTATATAT', 1), 'CGGAAAAAAAATTTATATAT', 'Works for reading frame 1');
 is(translateReadingFrame('CCGGAAAAAAAATTTATATAT', 2), 'GGAAAAAAAATTTATATAT', 'Works for reading frame 2');
+is(translateReadingFrame('CAT', 3), '', 'Handles nucleotide string length == substring length');
+is(translateReadingFrame('CAT', 4), '', 'Handles nucleotide string length < substring length');
+
+
+# Test getSequenceId
+
+is(getSequenceId('>simple_1'), 'simple_1', 'Works for one word header');
+is(getSequenceId('>simple_1 more stuff'), 'simple_1', 'Works for one word header');
+is(getSequenceId('>'), '<unknown>', 'Handles missing sequence id');

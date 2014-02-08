@@ -12,7 +12,10 @@ use warnings;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(translateDNAToProtein reverseComplement translateReadingFrame);
+our @EXPORT_OK = qw( translateDNAToProtein
+                     reverseComplement
+                     translateReadingFrame
+                     getSequenceId );
 
 our $VERSION = "1.00";
 
@@ -86,7 +89,7 @@ my %genetic_code = (
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++
-#           translateToProtein
+#           translateDNAToProtein
 #
 sub translateDNAToProtein
 {
@@ -109,6 +112,9 @@ sub translateDNAToProtein
     return $protein;
 }
 
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#           reverseComplement
+#
 sub reverseComplement
 {
     my($sequence) = @_;
@@ -120,6 +126,9 @@ sub reverseComplement
     return $revCom;
 }
 
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#           translateReadingFrame
+#
 sub translateReadingFrame
 {
     my($sequence, $start, $end) = @_;
@@ -128,9 +137,31 @@ sub translateReadingFrame
         $end = length($sequence);
     }
     
+    # return empty string if sequence is too short for end index
+    return "" if ($end <= $start);
+    
     my $frameSequence = substr($sequence, $start, $end - $start);
 
     return $frameSequence;
+}
+
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#           getSequenceId
+#
+sub getSequenceId
+{
+    my($header) = @_;
+    my @headerParts = split(" ", $header);
+    my $seqId = shift(@headerParts);
+    
+    if ($seqId && length($seqId) > 1) {
+        $seqId = substr($seqId, 1);
+    
+    } else {
+        $seqId = "<unknown>";  
+    }
+    
+    return $seqId;
 }
 
 # dummy subroutine
