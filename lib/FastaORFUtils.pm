@@ -12,7 +12,7 @@ use warnings;
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(translateDNAToProtein);
+our @EXPORT_OK = qw(translateDNAToProtein reverseComplement translateReadingFrame);
 
 our $VERSION = "1.00";
 
@@ -97,6 +97,8 @@ sub translateDNAToProtein
     for (my $i=0; $i<length($sequence)-2; $i+=3) {
         my $codon = substr($sequence,$i,3);
         
+        $codon = uc($codon);
+        
         if (exists $genetic_code{$codon}) {
             $protein .= $genetic_code{$codon};
         } else {
@@ -107,5 +109,33 @@ sub translateDNAToProtein
     return $protein;
 }
 
+sub reverseComplement
+{
+    my($sequence) = @_;
+
+    my $revCom = reverse $sequence;
+    
+    $revCom =~ tr/ACGTacgt/TGCAtgca/;
+    
+    return $revCom;
+}
+
+sub translateReadingFrame
+{
+    my($sequence, $start, $end) = @_;
+    
+    unless ($end) {
+        $end = length($sequence);
+    }
+    
+    my $frameSequence = substr($sequence, $start, $end - $start);
+
+    return $frameSequence;
+}
+
+# dummy subroutine
+#my $str = shift;
+
+#    return $str;
 
 1;
