@@ -15,7 +15,8 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = qw( translateDNAToProtein
                      reverseComplement
                      translateReadingFrame
-                     getSequenceId );
+                     getSequenceId
+                     getLongestORF);
 
 our $VERSION = "1.00";
 
@@ -162,6 +163,42 @@ sub getSequenceId
     }
     
     return $seqId;
+}
+
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#           getLongestORF
+#
+sub getLongestORF
+{
+    my($seq) = @_;
+    
+    my $posIndex = 0;
+    my $posIndexLongest = 0;
+    my $sequenceLongest = "";
+    
+    # match codons until a stop codon, not greedy
+    while ($seq =~ m/((\w\w\w)*?)(TAA|TAG|TGA)/ig) {
+        # print "Found '$1' at position $posIndex\n";
+        if (length($1) > length($sequenceLongest)) {
+            $posIndexLongest = $posIndex;
+            $sequenceLongest = $1;
+        }
+        
+        $posIndex = pos($seq);
+    }
+    
+    # check leftover string
+    my $leftover = substr($seq, $posIndex);
+    $leftover =~ m/((\w\w\w)*)/i;
+    
+    if (defined($1) && length($1) > length($sequenceLongest)) {
+        $posIndexLongest = $posIndex;
+        $sequenceLongest = $1;
+    }
+    
+    # print "Leftover: " . substr($seq, $posIndex) . " at position $posIndex\n";
+    
+    return ($sequenceLongest, $posIndexLongest);
 }
 
 # dummy subroutine

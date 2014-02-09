@@ -16,7 +16,8 @@ use lib '../lib';
 use FastaORFUtils qw( translateDNAToProtein
                       reverseComplement
                       translateReadingFrame
-                      getSequenceId );
+                      getSequenceId
+                      getLongestORF );
 
 
 # Test translateDNAToProtein
@@ -44,6 +45,41 @@ is(translateReadingFrame('CCGGAAAAAAAATTTATATAT', 1), 'CGGAAAAAAAATTTATATAT', 'W
 is(translateReadingFrame('CCGGAAAAAAAATTTATATAT', 2), 'GGAAAAAAAATTTATATAT', 'Works for reading frame 2');
 is(translateReadingFrame('CAT', 3), '', 'Handles nucleotide string length == substring length');
 is(translateReadingFrame('CAT', 4), '', 'Handles nucleotide string length < substring length');
+
+
+# Test getLongestORF
+
+my($seq, $len) = getLongestORF('TGA');
+is($seq, '', 'Handles only stop codon: Sequence');
+is($len, 0, 'Handles only stop codon: Length');
+
+($seq, $len) = getLongestORF('CATCAT');
+is($seq, 'CATCAT', 'Handles no stop codons: Sequence');
+is($len, 0, 'Handles no stop codons: Length');
+
+($seq, $len) = getLongestORF('CATCATTAGCAT');
+is($seq, 'CATCAT', 'Handles one stop codon: Sequence');
+is($len, 0, 'Handles one stop codon: Length');
+
+($seq, $len) = getLongestORF('GGGCATCATTAGCATTAAGGG');
+is($seq, 'GGGCATCAT', 'Handles two stop codons, first frame longest: Sequence');
+is($len, 0, 'Handles two stop codons, first frame longest: Length');
+
+($seq, $len) = getLongestORF('GGGTAGGGGCATCATTAAGGG');
+is($seq, 'GGGCATCAT', 'Handles two stop codons, 2nd frame longest: Sequence');
+is($len, 6, 'Handles two stop codons, 2nd frame longest: Length');
+
+($seq, $len) = getLongestORF('TAGCATTAAGGGCATCAT');
+is($seq, 'GGGCATCAT', 'Handles two stop codons, last frame longest: Sequence');
+is($len, 9, 'Handles two stop codons, last frame longest: Length');
+
+($seq, $len) = getLongestORF('TAGCATTAAGGGCATCATG');
+is($seq, 'GGGCATCAT', 'Handles two stop codons, last frame longest: Sequence');
+is($len, 9, 'Handles two stop codons, last frame longest: Length');
+
+($seq, $len) = getLongestORF('TAGCATTAAGGGCATCATGG');
+is($seq, 'GGGCATCAT', 'Handles two stop codons, last frame longest, one extra char: Sequence');
+is($len, 9, 'Handles two stop codons, last frame longest, two extra chars: Length');
 
 
 # Test getSequenceId

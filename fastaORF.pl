@@ -77,19 +77,30 @@ while ($header) {
         $readingFrames{"r$index"} = FastaORFUtils::translateReadingFrame($revCom, $index);
     }
     
+    my %longestORFs;
+    my $longestORFLength = 0;
     
-    #temp print results
+    foreach my $key (keys %readingFrames) {
+        my($orf, $len) = FastaORFUtils::getLongestORF($readingFrames{$key});
+        $longestORFs{$key} = $orf;
+    }
+    
+    
+    # temp print results
     for (my $index=0; $index<3; $index++) {
         my $key = $index;
-        my $val = $readingFrames{$key};
-        say "$seqId  $key   $val";
+        my $val = $longestORFs{$key};
+        say "$seqId  $key   " .length($val) . "  $val";
     }
     
     for (my $rindex=0; $rindex<3; $rindex++) {
         my $key = "r$rindex";
-        my $val = $readingFrames{$key};
-        say "$seqId  $key  $val";
+        my $val = $longestORFs{$key};
+        say "$seqId  $key  " .length($val) . "  $val";
     }
+    
+    print "\n";
+    # end temp
     
     # call translation subroutine
     # my $proteinSequence = FastaORFUtils::translateDNAToProtein($seq);
