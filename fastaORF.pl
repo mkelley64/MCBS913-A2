@@ -107,7 +107,27 @@ while ($header) {
     }
     
     print "\n";
-
+    
+    # write "best" protein sequence to file
+    foreach my $key (keys %longestORFdb) {
+        my $orf = $longestORFdb{$key}->{'orf'};
+        
+        if (length($orf) == $longestORFLength) {
+            my $outputFile = $seqId . ".out";
+            
+            unless (open(OUTPUT, ">$outputFile")) {
+                print "Can not write to $outputFile";
+            }
+            
+            print OUTPUT ">$seqId\_$key\n";
+            print OUTPUT FastaORFUtils::translateDNAToProtein($orf);
+            
+            close(OUTPUT);
+            
+            next;
+        } 
+    }
+    
     #--------------------------------------------------------
     $header = $inLine;    # last line read is either next header or null
 }
