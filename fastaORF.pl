@@ -77,42 +77,56 @@ while ($header) {
         $readingFrames{"r$index"} = FastaORFUtils::translateReadingFrame($revCom, $index);
     }
     
-    my %longestORFs;
+    # create db of ORFs
+    my %longestORFdb;
     my $longestORFLength = 0;
     
     foreach my $key (keys %readingFrames) {
-        my($orf, $len) = FastaORFUtils::getLongestORF($readingFrames{$key});
-        $longestORFs{$key} = $orf;
+        my($orf, $start) = FastaORFUtils::getLongestORF($readingFrames{$key});
+        my $orfLength = length($orf);
+        
+        if ($orfLength > $longestORFLength) {
+            $longestORFLength = $orfLength;
+        }
+
+        $longestORFdb{$key} = { "orf" => $orf,
+                                "start" => $start};
     }
     
+    # print results to console
+    print $header;
     
-    # temp print results
     for (my $index=0; $index<3; $index++) {
-        my $key = $index;
-        my $val = $longestORFs{$key};
-        say "$seqId  $key   " .length($val) . "  $val";
+        my $frameId = $index;
+        printORFdata ($seqId, $frameId, $longestORFdb{$frameId}, $longestORFLength);
     }
     
     for (my $rindex=0; $rindex<3; $rindex++) {
-        my $key = "r$rindex";
-        my $val = $longestORFs{$key};
-        say "$seqId  $key  " .length($val) . "  $val";
+        my $frameId = "r$rindex";
+        printORFdata ($seqId, $frameId, $longestORFdb{$frameId}, $longestORFLength);
     }
     
     print "\n";
-    # end temp
-    
-    # call translation subroutine
-    # my $proteinSequence = FastaORFUtils::translateDNAToProtein($seq);
-
-    # output results
-    #print $header;
-    # say $proteinSequence;
 
     #--------------------------------------------------------
     $header = $inLine;    # last line read is either next header or null
 }
 
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#                printORFdata
+#
+sub printORFdata
+{
+    my $sequenceId = $_[0];
+    my $frameId = $_[1];
+    my $orfData = $_[2];
+    my $maxLength = $_[3];
+    
+    my $orfLength = length($orfData->{'orf'});
+    my $maxFlag = ($orfLength == $maxLength) ? "*": " ";
+    
+    say "$maxFlag$sequenceId\t$frameId\t$orfLength\t$orfData->{'start'}";
+}
 
 #+++++++++++++++++++++++++++++++++++++++++++++++
 #                checkUsage
