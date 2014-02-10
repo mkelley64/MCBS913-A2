@@ -46,6 +46,9 @@ if (substr( $header, 0, 1 ) ne '>') {
     exit;
 }
 
+# db for protein output file
+my @proteinData;
+
 # for each sequence
 while ($header) {
     
@@ -77,20 +80,34 @@ while ($header) {
         $readingFrames{"r$index"} = FastaORFUtils::translateReadingFrame($revCom, $index);
     }
     
-    # create db of ORFs
+    # create db of longest ORF per frame
     my %longestORFdb;
     my $longestORFLength = 0;
     
-    foreach my $key (keys %readingFrames) {
-        my($orf, $start) = FastaORFUtils::getLongestORF($readingFrames{$key});
+    foreach my $frameId (keys %readingFrames) {
+        my($orf, $start) = FastaORFUtils::getLongestORF($readingFrames{$frameId});
         my $orfLength = length($orf);
         
         if ($orfLength > $longestORFLength) {
             $longestORFLength = $orfLength;
         }
 
-        $longestORFdb{$key} = { "orf" => $orf,
-                                "start" => $start};
+        $longestORFdb{$frameId} = { "orf"   => $orf,
+                                    "start" => $start };
+    }
+    
+    # create array of longest ORF per sequence
+    foreach my $frameId (keys %longestORFdb) {
+        my $orf = $longestORFdb{$frameId}->{"orf"};
+       
+        if (length($orf) == $longestORFLength) {
+            my $data = { "seqId"    => $seqId,
+                         "seqBody"  => $seqBody,
+                         "frameId"  => $frameId,
+                         "orf"      => $orf };
+            
+            push(@proteinData, $data);
+        }
     }
     
     # print results to console
@@ -108,29 +125,32 @@ while ($header) {
     
     print "\n";
     
-    # write "best" protein sequence to file
-    foreach my $key (keys %longestORFdb) {
-        my $orf = $longestORFdb{$key}->{'orf'};
-        
-        if (length($orf) == $longestORFLength) {
-            my $outputFile = $seqId . ".out";
-            
-            unless (open(OUTPUT, ">$outputFile")) {
-                print "Can not write to $outputFile";
-            }
-            
-            print OUTPUT ">$seqId\_$key $seqBody\n";
-            print OUTPUT FastaORFUtils::translateDNAToProtein($orf);
-            
-            close(OUTPUT);
-            
-            next;
-        } 
-    }
+    
     
     #--------------------------------------------------------
     $header = $inLine;    # last line read is either next header or null
 }
+
+
+# write "best" protein sequences to file    
+my $outputFile = $seqFile . ".out";
+    
+unless (open(OUTPUT, ">$outputFile")) {
+    print "Can not write to $outputFile";
+    exit;
+}
+
+foreach (@proteinData)
+{
+      my $protein = $_;
+      print OUTPUT ">$protein->{'seqId'}\_$protein->{'frameId'} $protein->{'seqBody'}\n";
+      print OUTPUT FastaORFUtils::translateDNAToProtein($protein->{'orf'});
+      print OUTPUT "\n\n";
+}
+    
+close(OUTPUT);
+
+exit;
 
 #+++++++++++++++++++++++++++++++++++++++++++++++
 #                printORFdata

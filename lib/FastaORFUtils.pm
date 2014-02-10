@@ -11,6 +11,7 @@ use strict;
 use warnings;
 
 require Exporter;
+
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw( translateDNAToProtein
                      reverseComplement
@@ -199,14 +200,7 @@ sub getLongestORF
         $sequenceLongest = $1;
     }
     
-    # print "Leftover: " . substr($seq, $posIndex) . " at position $posIndex\n";
-    
     return ($sequenceLongest, $posIndexLongest);
 }
-
-# dummy subroutine
-#my $str = shift;
-
-#    return $str;
 
 1;
