@@ -16,8 +16,8 @@ use lib '../lib';
 use FastaORFUtils qw( translateDNAToProtein
                       reverseComplement
                       translateReadingFrame
-                      getSequenceId
-                      getLongestORF );
+                      getLongestORF
+                      getHeaderParts );
 
 
 # Test translateDNAToProtein
@@ -82,8 +82,17 @@ is($seq, 'GGGCATCAT', 'Handles two stop codons, last frame longest, one extra ch
 is($len, 9, 'Handles two stop codons, last frame longest, two extra chars: Length');
 
 
-# Test getSequenceId
+# Test getHeaderParts
 
-is(getSequenceId('>simple_1'), 'simple_1', 'Works for one word header');
-is(getSequenceId('>simple_1 more stuff'), 'simple_1', 'Works for one word header');
-is(getSequenceId('>'), '<unknown>', 'Handles missing sequence id');
+my($seqId, $seqBody) = getHeaderParts('>simple_1');
+is($seqId, 'simple_1', 'Works for one word header: ID');
+is($seqBody, '', 'Works for one word header: Body');
+
+($seqId, $seqBody) = getHeaderParts('>simple_1 more stuff');
+is($seqId, 'simple_1', 'Works for header with body: ID');
+is($seqBody, 'more stuff', 'Works for header with body: Body');
+
+($seqId, $seqBody) = getHeaderParts('>');
+is($seqId, '<unknown>', 'Handles missing sequence id: ID');
+is($seqBody, '', 'Handles missing sequence id: Body');
+

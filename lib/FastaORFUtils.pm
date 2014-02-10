@@ -15,7 +15,7 @@ our @ISA = qw(Exporter);
 our @EXPORT_OK = qw( translateDNAToProtein
                      reverseComplement
                      translateReadingFrame
-                     getSequenceId
+                     getHeaderParts
                      getLongestORF);
 
 our $VERSION = "1.00";
@@ -147,22 +147,25 @@ sub translateReadingFrame
 }
 
 #+++++++++++++++++++++++++++++++++++++++++++++++
-#           getSequenceId
+#           getHeaderParts
 #
-sub getSequenceId
+sub getHeaderParts
 {
     my($header) = @_;
     my @headerParts = split(" ", $header);
     my $seqId = shift(@headerParts);
+    my $body = "";
     
     if ($seqId && length($seqId) > 1) {
         $seqId = substr($seqId, 1);
+        $body = substr($header, length($seqId)+1);
+        $body =~ s/^\s+|\s+$//g  #trim white space
     
     } else {
         $seqId = "<unknown>";  
     }
     
-    return $seqId;
+    return ($seqId, $body);
 }
 
 #+++++++++++++++++++++++++++++++++++++++++++++++

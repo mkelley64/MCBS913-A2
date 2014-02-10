@@ -49,8 +49,8 @@ if (substr( $header, 0, 1 ) ne '>') {
 # for each sequence
 while ($header) {
     
-    # get sequenceId
-    my $seqId = FastaORFUtils::getSequenceId($header);
+    # get sequenceId, sequenceBody
+    my($seqId, $seqBody) = FastaORFUtils::getHeaderParts($header);
       
     my $seq = ""; 
     my $inLine = <IN>;
@@ -119,7 +119,7 @@ while ($header) {
                 print "Can not write to $outputFile";
             }
             
-            print OUTPUT ">$seqId\_$key\n";
+            print OUTPUT ">$seqId\_$key $seqBody\n";
             print OUTPUT FastaORFUtils::translateDNAToProtein($orf);
             
             close(OUTPUT);
